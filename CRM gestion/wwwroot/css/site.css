@@ -1,0 +1,32 @@
+/* Navegación básica */
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1rem;
+}
+
+    nav ul li {
+        display: inline;
+    }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333; /* Color de texto principal */
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+            nav ul li a:hover {
+                background-color: #f0f0f0; /* Fondo al pasar el mouse */
+                color: #007bff; /* Color al pasar el mouse */
+            }
+
+            /* Estilo para enlace activo */
+            nav ul li a.active {
+                background-color: #007bff; /* Fondo del enlace activo */
+                color: white; /* Texto blanco para contraste */
+                font-weight: bold; /* Resalta visualmente */
+            }

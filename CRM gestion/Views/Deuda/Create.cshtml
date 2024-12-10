@@ -1,0 +1,30 @@
+﻿@model CRM_gestion.Models.Deuda
+
+<h1>Registrar Nueva Deuda</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="ClienteId" class="form-label">Cliente</label>
+        <select asp-for="ClienteId" asp-items="ViewBag.Clientes" class="form-select">
+            <option value="">Seleccione un cliente</option>
+        </select>
+        <span asp-validation-for="ClienteId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Monto" class="form-label">Monto</label>
+        <input asp-for="Monto" class="form-control" type="number" step="0.01" placeholder="Ingrese el monto de la deuda" />
+        <span asp-validation-for="Monto" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="FechaVencimiento" class="form-label">Fecha de Vencimiento</label>
+        <input asp-for="FechaVencimiento" class="form-control" type="date" />
+        <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
