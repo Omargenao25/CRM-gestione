@@ -9,12 +9,18 @@ namespace CRM_gestion.Data
 {
     public class CRM_gestionContext : DbContext
     {
+        public CRM_gestionContext()
+        {
+        }
+
         public CRM_gestionContext (DbContextOptions<CRM_gestionContext> options)
             : base(options)
         {
         }
 
-        public DbSet<CRM_gestion.Models.Cliente> Cliente { get; set; } = default!;
-        public DbSet<CRM_gestion.Models.Cobro> Cobro { get; set; } = default!;
+        public DbSet<CRM_gestion.Models.Cliente> Clientes { get; set; } = default!;
+        public DbSet<CRM_gestion.Models.Cobro> Cobros { get; set; } = default!;
+        public DbSet<CRM_gestion.Models.Deuda> Deudas { get; set; } = default!;
+
     }
 }

@@ -1,4 +1,5 @@
 using CRM_gestion.Cliente_repositorio;
+using CRM_gestion.Data;
 using CRM_gestion.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +11,7 @@ namespace CRM_gestion.Controllers
 
         public ClienteController()
         {
-            _clienteRepository = new ClienteRepository();
+            this._clienteRepository = new ClienteRepository(new CRM_gestionContext());
         }
 
         // Listar todos los clientes

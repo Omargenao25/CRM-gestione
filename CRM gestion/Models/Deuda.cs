@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CRM_gestion.Models
 {
@@ -10,8 +11,8 @@ namespace CRM_gestion.Models
         [Required(ErrorMessage = "Debe seleccionar un cliente.")]
         public int ClienteId { get; set; } // Relación con el cliente
 
-        [Required(ErrorMessage = "Debe ingresar el monto.")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "El monto debe ser mayor a cero.")]
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Monto { get; set; }
 
         [Required(ErrorMessage = "Debe ingresar la fecha de vencimiento.")]

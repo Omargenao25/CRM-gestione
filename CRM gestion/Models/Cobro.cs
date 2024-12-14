@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CRM_gestion.Models
 {
@@ -11,16 +12,13 @@ namespace CRM_gestion.Models
         [Required]
         public int DeudaId { get; set; }
 
-        [Required]
-        public int ClienteId { get; set; }
-
-        [Required]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal MontoCobrado { get; set; }
 
         [Required]
         public DateTime FechaCobro { get; set; }
 
         public required Deuda Deuda { get; set; }
-        public required Cliente Cliente { get; set; }
+       
     }
 }
