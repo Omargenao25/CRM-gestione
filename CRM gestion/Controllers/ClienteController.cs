@@ -6,34 +6,75 @@ namespace CRM_gestion.Controllers
 {
     public class ClienteController : Controller
     {
-        private readonly ClienteRepository clienteRepository;
+        private readonly ClienteRepository _clienteRepository;
 
         public ClienteController()
         {
-            this.clienteRepository = new ClienteRepository();
+            _clienteRepository = new ClienteRepository();
         }
 
-        public ViewResult Index()
+        // Listar todos los clientes
+        public IActionResult Index()
         {
-            var clientes = clienteRepository.GetAll();
+            var clientes = _clienteRepository.GetAll();
             return View(clientes);
         }
 
-        // Método para mostrar la vista de registro
+        // Mostrar formulario para crear un nuevo cliente
         public IActionResult Create()
         {
             return View();
         }
 
-        // Método para procesar el formulario de registro
+        // Guardar un nuevo cliente
         [HttpPost]
         public IActionResult Create(Cliente cliente)
         {
             if (ModelState.IsValid)
             {
-                clienteRepository.InsertarCliente(cliente);
-                TempData["Message"] = "Cliente registrado correctamente.";
+                _clienteRepository.InsertarCliente(cliente);
                 return RedirectToAction("Index");
+            }
+            return View(cliente);
+        }
+
+        // Mostrar formulario para editar un cliente existente
+        public IActionResult Edit(int id)
+        {
+            var cliente = _clienteRepository.GetById(id);
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+            return View(cliente);
+        }
+
+        // Guardar cambios en un cliente existente
+        [HttpPost]
+        public IActionResult Edit(Cliente cliente)
+        {
+            if (ModelState.IsValid)
+            {
+                _clienteRepository.ActualizarCliente(cliente);
+                return RedirectToAction("Index");
+            }
+            return View(cliente);
+        }
+
+        // Eliminar un cliente
+        public IActionResult Delete(int id)
+        {
+            _clienteRepository.BorrarCliente(id);
+            return RedirectToAction("Index");
+        }
+
+        // Ver detalles de un cliente específico
+        public IActionResult Details(int id)
+        {
+            var cliente = _clienteRepository.GetById(id);
+            if (cliente == null)
+            {
+                return NotFound();
             }
             return View(cliente);
         }

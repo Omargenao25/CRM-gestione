@@ -15,5 +15,6 @@ namespace CRM_gestion.Data
         }
 
         public DbSet<CRM_gestion.Models.Cliente> Cliente { get; set; } = default!;
+        public DbSet<CRM_gestion.Models.Cobro> Cobro { get; set; } = default!;
     }
 }
