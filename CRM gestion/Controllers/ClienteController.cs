@@ -1,4 +1,4 @@
-﻿using CRM_gestion.Cliente_repositorio;
+using CRM_gestion.Cliente_repositorio;
 using CRM_gestion.Models;
 using Microsoft.AspNetCore.Mvc;
 

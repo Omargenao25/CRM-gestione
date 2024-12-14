@@ -1,4 +1,4 @@
-﻿using CRM_gestion.Models;
+using CRM_gestion.Models;
 
 namespace CRM_gestion.Cliente_repositorio
 {
