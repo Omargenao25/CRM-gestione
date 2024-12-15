@@ -61,9 +61,6 @@ namespace CRM_gestion.Controllers
             {
                 try
                 {
-                    // Verificar si ClienteId está asignado y cargar el cliente correspondiente
-                    deuda.Cliente = _context.Clientes.Find(deuda.ClienteId);
-
                     _context.Deudas.Add(deuda);
                     _context.SaveChanges();
                     return RedirectToAction("Index");

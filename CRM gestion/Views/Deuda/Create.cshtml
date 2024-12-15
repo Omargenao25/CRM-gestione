@@ -5,7 +5,7 @@
 <form asp-action="Create" method="post">
     <div class="form-group">
         <label for="ClienteId">Cliente</label>
-        <select asp-for="ClienteId" asp-items="(SelectList)ViewData['Clientes']" class="form-control"></select>
+        <select asp-for="ClienteId" asp-items="@(ViewData["Clientes"] as SelectList)" class="form-control"></select>
         <span asp-validation-for="ClienteId" class="text-danger"></span>
     </div>
 
