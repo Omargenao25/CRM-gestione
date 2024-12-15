@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CRM_gestion.Migrations
 {
     /// <inheritdoc />
-    public partial class GestionMigration : Migration
+    public partial class FluentApiValidation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Cliente",
+                name: "Clientes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -23,11 +23,11 @@ namespace CRM_gestion.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cliente", x => x.Id);
+                    table.PrimaryKey("PK_Clientes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Deuda",
+                name: "Deudas",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -38,17 +38,17 @@ namespace CRM_gestion.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Deuda", x => x.Id);
+                    table.PrimaryKey("PK_Deudas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Deuda_Cliente_ClienteId",
+                        name: "FK_Deudas_Clientes_ClienteId",
                         column: x => x.ClienteId,
-                        principalTable: "Cliente",
+                        principalTable: "Clientes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cobro",
+                name: "Cobros",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -59,23 +59,23 @@ namespace CRM_gestion.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cobro", x => x.Id);
+                    table.PrimaryKey("PK_Cobros", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cobro_Deuda_DeudaId",
+                        name: "FK_Cobros_Deudas_DeudaId",
                         column: x => x.DeudaId,
-                        principalTable: "Deuda",
+                        principalTable: "Deudas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cobro_DeudaId",
-                table: "Cobro",
+                name: "IX_Cobros_DeudaId",
+                table: "Cobros",
                 column: "DeudaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Deuda_ClienteId",
-                table: "Deuda",
+                name: "IX_Deudas_ClienteId",
+                table: "Deudas",
                 column: "ClienteId");
         }
 
@@ -83,13 +83,13 @@ namespace CRM_gestion.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Cobro");
+                name: "Cobros");
 
             migrationBuilder.DropTable(
-                name: "Deuda");
+                name: "Deudas");
 
             migrationBuilder.DropTable(
-                name: "Cliente");
+                name: "Clientes");
         }
     }
 }

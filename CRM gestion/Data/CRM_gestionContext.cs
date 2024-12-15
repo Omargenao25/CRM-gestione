@@ -23,29 +23,28 @@ namespace CRM_gestion.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configuración de la relación entre Cliente y Deuda
-            modelBuilder.Entity<CRM_gestion.Models.Deuda>()
-                .HasOne(d => d.Cliente) // Una Deuda tiene un Cliente
-                .WithMany(c => c.Deudas) // Un Cliente puede tener muchas Deudas
-                .HasForeignKey(d => d.ClienteId) // La clave foránea de Deuda será ClienteId
-                .OnDelete(DeleteBehavior.Cascade); // Eliminar deudas si se elimina el cliente
+            // Relación entre Cliente y Deuda
+            modelBuilder.Entity<Deuda>()
+                .HasOne(d => d.Cliente)
+                .WithMany(c => c.Deudas)
+                .HasForeignKey(d => d.ClienteId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Configuración de la relación entre Deuda y Cobro
-            modelBuilder.Entity<CRM_gestion.Models.Cobro>()
-                .HasOne(c => c.Deuda) // Un Cobro tiene una Deuda
-                .WithMany(d => d.Cobros) // Una Deuda puede tener muchos Cobros
-                .HasForeignKey(c => c.DeudaId) // La clave foránea de Cobro será DeudaId
-                .OnDelete(DeleteBehavior.Cascade); // Eliminar cobros si se elimina la deuda
+            // Relación entre Deuda y Cobro
+            modelBuilder.Entity<Cobro>()
+                .HasOne(c => c.Deuda)
+                .WithMany(d => d.Cobros)
+                .HasForeignKey(c => c.DeudaId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Configuración de tipos de datos
-            modelBuilder.Entity<CRM_gestion.Models.Deuda>()
+            // Configuración del tipo decimal (en caso de no usar el atributo en las propiedades)
+            modelBuilder.Entity<Deuda>()
                 .Property(d => d.Monto)
-                .HasColumnType("decimal(18,2)"); // Definir el tipo de columna para el monto
+                .HasColumnType("decimal(18,2)");
 
-            modelBuilder.Entity<CRM_gestion.Models.Cobro>()
+            modelBuilder.Entity<Cobro>()
                 .Property(c => c.MontoCobrado)
-                .HasColumnType("decimal(18,2)"); // Definir el tipo de columna para el monto cobrado
+                .HasColumnType("decimal(18,2)");
         }
     }
-
 }

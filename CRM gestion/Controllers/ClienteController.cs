@@ -1,8 +1,6 @@
 using CRM_gestion.Cliente_repositorio;
-using CRM_gestion.Data;
 using CRM_gestion.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CRM_gestion.Controllers
 {
@@ -16,143 +14,84 @@ namespace CRM_gestion.Controllers
         }
 
         // Listar todos los clientes
-        public IActionResult Index()
+        public IActionResult Index() => ExecuteSafe(() => View(_clienteRepository.GetAll()), "No se pudieron cargar los clientes.");
+
+        // Ver detalles de un cliente específico
+        public IActionResult Details(int id) =>
+            id <= 0 ? BadRequest("El ID proporcionado no es válido.") : ExecuteSafe(() => {
+                var cliente = _clienteRepository.GetById(id);
+                return cliente == null ? NotFound() : View(cliente);
+            });
+
+        // Mostrar formulario para crear un nuevo cliente
+        public IActionResult Create() => View();
+
+        // Guardar un nuevo cliente
+        [HttpPost]
+        public IActionResult Create(Cliente cliente) => ExecuteValidated(cliente, () => {
+            _clienteRepository.InsertarCliente(cliente);
+            return RedirectToAction("Index");
+        });
+
+        // Mostrar formulario para editar un cliente existente
+        public IActionResult Edit(int id) =>
+            id <= 0 ? BadRequest("El ID proporcionado no es válido.") : ExecuteSafe(() => {
+                var cliente = _clienteRepository.GetById(id);
+                return cliente == null ? NotFound() : View(cliente);
+            });
+
+        // Guardar cambios en un cliente existente
+        [HttpPost]
+        public IActionResult Edit(Cliente cliente) => ExecuteValidated(cliente, () => {
+            if (_clienteRepository.GetById(cliente.Id) == null)
+            {
+                return NotFound("El cliente no existe.");
+            }
+            _clienteRepository.ActualizarCliente(cliente);
+            return RedirectToAction("Index");
+        });
+
+        // Eliminar un cliente
+        [HttpPost]
+        public IActionResult Delete(int id) =>
+            id <= 0 ? BadRequest("El ID proporcionado no es válido.") : ExecuteSafe(() => {
+                var cliente = _clienteRepository.GetById(id);
+                if (cliente == null)
+                {
+                    return NotFound("El cliente no existe.");
+                }
+                _clienteRepository.BorrarCliente(cliente.Id);
+                return RedirectToAction("Index");
+            });
+
+        // Método para manejo de errores genérico
+        private IActionResult ExecuteSafe(Func<IActionResult> action, string errorMessage = "Se produjo un error.")
         {
             try
             {
-                var clientes = _clienteRepository.GetAll();
-                return View(clientes);
+                return action();
             }
             catch (Exception ex)
             {
                 // Opcional: Registrar el error
-                ViewBag.ErrorMessage = "No se pudieron cargar los clientes.";
+                ViewBag.ErrorMessage = errorMessage;
                 return View("Error");
             }
         }
 
-        // Ver detalles de un cliente específico
-        public IActionResult Details(int id)
-        {
-            if (id <= 0)
-            {
-                return BadRequest("El ID proporcionado no es válido.");
-            }
-
-            var cliente = _clienteRepository.GetById(id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-
-            return View(cliente);
-        }
-
-        // Mostrar formulario para crear un nuevo cliente
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // Guardar un nuevo cliente
-        [HttpPost]
-        public IActionResult Create(Cliente cliente)
+        // Método para validación genérica de modelo
+        private IActionResult ExecuteValidated(Cliente cliente, Func<IActionResult> action)
         {
             if (cliente == null)
             {
                 ModelState.AddModelError("", "El cliente no puede ser nulo.");
                 return View(cliente);
             }
-
-            if (!ModelState.IsValid)
-            {
-                return View(cliente); // Asegúrate de pasar el cliente con los datos introducidos
-            }
-
-            try
-            {
-                _clienteRepository.InsertarCliente(cliente);
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                // Opcional: Registrar el error
-                ModelState.AddModelError("", "Ocurrió un error al guardar el cliente.");
-                return View(cliente); // Devuelve el modelo con los datos introducidos
-            }
-        }
-
-        // Mostrar formulario para editar un cliente existente
-        public IActionResult Edit(int id)
-        {
-            if (id <= 0)
-            {
-                return BadRequest("El ID proporcionado no es válido.");
-            }
-
-            var cliente = _clienteRepository.GetById(id);
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-
-            return View(cliente);
-        }
-
-        // Guardar cambios en un cliente existente
-        [HttpPost]
-        public IActionResult Edit(Cliente cliente)
-        {
             if (!ModelState.IsValid)
             {
                 return View(cliente);
             }
-
-            try
-            {
-                var clienteExistente = _clienteRepository.GetById(cliente.Id);
-                if (clienteExistente == null)
-                {
-                    return NotFound("El cliente no existe.");
-                }
-
-                _clienteRepository.ActualizarCliente(cliente);
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                // Opcional: Registrar el error
-                ModelState.AddModelError("", "Ocurrió un error al actualizar el cliente.");
-                return View(cliente);
-            }
-        }
-
-        [HttpPost]
-        // Eliminar un cliente
-        public IActionResult Delete(int id)
-        {
-            if (id <= 0)
-            {
-                return BadRequest("El ID proporcionado no es válido.");
-            }
-
-            try
-            {
-                var cliente = _clienteRepository.GetById(id);
-                if (cliente == null)
-                {
-                    return NotFound("El cliente no existe.");
-                }
-
-                _clienteRepository.BorrarCliente(cliente.Id);
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                // Opcional: Registrar el error
-                TempData["ErrorMessage"] = "Ocurrió un error al eliminar el cliente.";
-                return RedirectToAction("Index");
-            }
+            return ExecuteSafe(action);
         }
     }
 }

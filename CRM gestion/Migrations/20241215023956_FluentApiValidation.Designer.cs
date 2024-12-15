@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRM_gestion.Migrations
 {
     [DbContext(typeof(CRM_gestionContext))]
-    [Migration("20241214233514_SecondMigration")]
-    partial class SecondMigration
+    [Migration("20241215023956_FluentApiValidation")]
+    partial class FluentApiValidation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

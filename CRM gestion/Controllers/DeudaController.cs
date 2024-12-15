@@ -18,105 +18,103 @@ namespace CRM_gestion.Controllers
             _clienteRepository = new ClienteRepository(_context);
         }
 
-        public ViewResult Index()
+        // Listar todas las deudas
+        public IActionResult Index() => ExecuteSafe(() =>
         {
-            var Deudas = _context.Deudas
+            var deudas = _context.Deudas
                         .Include(d => d.Cobros)
+                        .Include(d => d.Cliente)
                         .ToList();
+            return View(deudas);
+        }, "No se pudieron cargar las deudas.");
 
-            return View(Deudas);
-        }
+        // Ver detalles de una deuda específica
+        public IActionResult Details(int id) =>
+            id <= 0 ? BadRequest("El ID proporcionado no es válido.") : ExecuteSafe(() =>
+            {
+                var deuda = _context.Deudas
+                            .Include(d => d.Cobros)
+                            .Include(d => d.Cliente)
+                            .FirstOrDefault(d => d.Id == id);
+                return deuda == null ? NotFound() : View(deuda);
+            });
 
-        public IActionResult Details(int id)
+        // Mostrar formulario para crear una nueva deuda
+        public IActionResult Create() => ExecuteSafe(() =>
         {
-            var Deuda = _context.Deudas
-                        .Include(d => d.Cobros)
-                        .FirstOrDefault(d => d.Id == id);
-
-            if (Deuda == null)
-            {
-                return NotFound();
-            }
-            return View(Deuda);
-        }
-
-        public ViewResult Create()
-        {
-            try
-            {
-                var clientes = _clienteRepository.GetAll();
-                ViewData["Clientes"] = new SelectList(clientes, "Id", "Nombre");
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Error al cargar la lista de clientes.");
-            }
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Create(Deuda deuda)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Deudas.Add(deuda);
-                    _context.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Error al guardar la deuda: " + ex.Message);
-                }
-            }
-
-            // Si hay errores, recargar la lista de clientes
             var clientes = _clienteRepository.GetAll();
             ViewData["Clientes"] = new SelectList(clientes, "Id", "Nombre");
-            return View(deuda);
-        }
+            return View();
+        }, "Error al cargar la lista de clientes.");
 
-        public IActionResult CreateCobros(int id)
-        {
-            var Deuda = _context.Deudas.Find(id);
-            if (Deuda == null)
-            {
-                return NotFound();
-            }
-            return View(Deuda);
-        }
-
+        // Guardar una nueva deuda
         [HttpPost]
-        public IActionResult CreateCobro(int IdDeuda, Cobro cobro)
+        public IActionResult Create(Deuda deuda) => ExecuteValidated(deuda, () =>
         {
-            if (!ModelState.IsValid)
-            {
-                return View(cobro);
-            }
+            _context.Deudas.Add(deuda);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        });
 
-            var Deuda = _context.Deudas.Find(IdDeuda);
+        // Mostrar formulario para crear cobros de una deuda específica
+        public IActionResult CreateCobros(int id) => ExecuteSafe(() =>
+        {
+            var deuda = _context.Deudas
+                        .Include(d => d.Cliente)
+                        .FirstOrDefault(d => d.Id == id);
+            return deuda == null ? NotFound() : View(deuda);
+        });
 
-            if (Deuda == null)
+        // Guardar un nuevo cobro para una deuda
+        [HttpPost]
+        public IActionResult CreateCobro(int idDeuda, Cobro cobro) => ExecuteValidated(cobro, () =>
+        {
+            var deuda = _context.Deudas
+                        .Include(d => d.Cliente)
+                        .FirstOrDefault(d => d.Id == idDeuda);
+
+            if (deuda == null)
             {
                 ModelState.AddModelError("", "La deuda especificada no existe.");
                 return View(cobro);
             }
 
-            cobro.DeudaId = Deuda.Id;
+            cobro.DeudaId = deuda.Id;
             cobro.FechaCobro = DateTime.Now;
 
+            _context.Cobros.Add(cobro);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        });
+
+        // Método para manejo de errores genérico
+        private IActionResult ExecuteSafe(Func<IActionResult> action, string errorMessage = "Se produjo un error.")
+        {
             try
             {
-                _context.Cobros.Add(cobro);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
+                return action();
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Error al guardar el cobro.");
-                return View(cobro);
+                // Opcional: Registrar el error
+                ViewBag.ErrorMessage = errorMessage;
+                return View("Error");
             }
+        }
+
+        // Método para validación genérica de modelo
+        private IActionResult ExecuteValidated(object model, Func<IActionResult> action)
+        {
+            if (model == null)
+            {
+                ModelState.AddModelError("", "El modelo no puede ser nulo.");
+                return View(model);
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            return ExecuteSafe(action);
         }
     }
 }
