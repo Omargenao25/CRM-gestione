@@ -15,7 +15,7 @@
         @foreach (var deuda in Model)
         {
             <tr>
-                <td>@deuda.Cliente.Nombre</td>
+                <td>@(deuda.Cliente != null ? deuda.Cliente.Nombre : "Cliente No Disponible")</td>
                 <td>@deuda.Monto</td>
                 <td>@deuda.FechaVencimiento.ToShortDateString()</td>
                 <td>

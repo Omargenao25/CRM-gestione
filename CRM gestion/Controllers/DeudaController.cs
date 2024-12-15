@@ -18,60 +18,95 @@ namespace CRM_gestion.Controllers
             _clienteRepository = new ClienteRepository(_context);
         }
 
-        // Listar todas las deudas
-        public IActionResult Index() => ExecuteSafe(() =>
+        public ViewResult Index()
         {
             var deudas = _context.Deudas
-                        .Include(d => d.Cobros)
-                        .Include(d => d.Cliente)
-                        .ToList();
+                                .Include(d => d.Cobros)
+                                .ToList();  // No need to include 'Deuda' again
+
             return View(deudas);
-        }, "No se pudieron cargar las deudas.");
+        }
 
-        // Ver detalles de una deuda específica
-        public IActionResult Details(int id) =>
-            id <= 0 ? BadRequest("El ID proporcionado no es válido.") : ExecuteSafe(() =>
+        public IActionResult Details(int id)
+        {
+            var deuda = _context.Deudas
+                                .Include(d => d.Cobros)  // Include Cobros, no need to include Deuda
+                                .FirstOrDefault(d => d.Id == id);  // Find the specific Deuda by ID
+
+            if (deuda == null)
             {
-                var deuda = _context.Deudas
-                            .Include(d => d.Cobros)
-                            .Include(d => d.Cliente)
-                            .FirstOrDefault(d => d.Id == id);
-                return deuda == null ? NotFound() : View(deuda);
-            });
+                return NotFound();
+            }
 
-        // Mostrar formulario para crear una nueva deuda
-        public IActionResult Create() => ExecuteSafe(() =>
+            return View(deuda);
+        }
+
+        public ViewResult Create()
         {
-            var clientes = _clienteRepository.GetAll();
-            ViewData["Clientes"] = new SelectList(clientes, "Id", "Nombre");
+            try
+            {
+                var clientes = _clienteRepository.GetAll();
+                ViewData["Clientes"] = new SelectList(clientes, "Id", "Nombre");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al cargar la lista de clientes: " + ex.Message);
+            }
             return View();
-        }, "Error al cargar la lista de clientes.");
+        }
 
-        // Guardar una nueva deuda
         [HttpPost]
-        public IActionResult Create(Deuda deuda) => ExecuteValidated(deuda, () =>
+        public IActionResult Create(Deuda deuda)
         {
-            _context.Deudas.Add(deuda);
-            _context.SaveChanges();
-            return RedirectToAction("Index");
-        });
+            try
+            {
+                // Asignar el cliente a la propiedad Cliente de la deuda
+                var cliente = _clienteRepository.GetById(deuda.ClienteId); // Asumiendo que deuda tiene un ClienteId
+                deuda.Cliente = cliente; // Asignamos el cliente a la propiedad Cliente
 
-        // Mostrar formulario para crear cobros de una deuda específica
-        public IActionResult CreateCobros(int id) => ExecuteSafe(() =>
+                _context.Deudas.Add(deuda);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al guardar la deuda: " + ex.Message);
+                // Recargar la lista de clientes en caso de error
+                var clientes = _clienteRepository.GetAll();
+                ViewData["Clientes"] = new SelectList(clientes, "Id", "Nombre");
+                return View(deuda);
+            }
+        }
+
+        public IActionResult CreateCobros(int id)
         {
             var deuda = _context.Deudas
-                        .Include(d => d.Cliente)
-                        .FirstOrDefault(d => d.Id == id);
-            return deuda == null ? NotFound() : View(deuda);
-        });
+                                .Include(d => d.Cliente)  // Cargar la relación con Cliente
+                                .Include(d => d.Cobros)   // Cargar la relación con Cobros
+                                .FirstOrDefault(d => d.Id == id);
 
-        // Guardar un nuevo cobro para una deuda
+            if (deuda == null)
+            {
+                return NotFound();
+            }
+
+            // Crear un nuevo Cobro y asignar la Deuda
+            var cobro = new Cobro { DeudaId = deuda.Id };
+
+            return View(cobro);  // Pasamos un Cobro vacío a la vista
+        }
+
         [HttpPost]
-        public IActionResult CreateCobro(int idDeuda, Cobro cobro) => ExecuteValidated(cobro, () =>
+        public IActionResult CreateCobro(int idDeuda, Cobro cobro)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(cobro);
+            }
+
             var deuda = _context.Deudas
-                        .Include(d => d.Cliente)
-                        .FirstOrDefault(d => d.Id == idDeuda);
+                                .Include(d => d.Cobros)  // Cargar la relación con Cobros si es necesario
+                                .FirstOrDefault(d => d.Id == idDeuda);
 
             if (deuda == null)
             {
@@ -81,40 +116,20 @@ namespace CRM_gestion.Controllers
 
             cobro.DeudaId = deuda.Id;
             cobro.FechaCobro = DateTime.Now;
+            cobro.Deuda = deuda;
+            deuda.Cobros.Add(cobro);
 
-            _context.Cobros.Add(cobro);
-            _context.SaveChanges();
-            return RedirectToAction("Index");
-        });
-
-        // Método para manejo de errores genérico
-        private IActionResult ExecuteSafe(Func<IActionResult> action, string errorMessage = "Se produjo un error.")
-        {
             try
             {
-                return action();
+                _context.Cobros.Add(cobro);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                // Opcional: Registrar el error
-                ViewBag.ErrorMessage = errorMessage;
-                return View("Error");
+                ModelState.AddModelError("", "Error al guardar el cobro: " + ex.Message);
+                return View(cobro);
             }
-        }
-
-        // Método para validación genérica de modelo
-        private IActionResult ExecuteValidated(object model, Func<IActionResult> action)
-        {
-            if (model == null)
-            {
-                ModelState.AddModelError("", "El modelo no puede ser nulo.");
-                return View(model);
-            }
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            return ExecuteSafe(action);
         }
     }
 }
