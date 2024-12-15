@@ -1,36 +1,41 @@
-﻿@model CRM_gestion.Models.Cliente
+﻿@model Cliente
 
-@{
-    ViewData["Title"] = "Details";
+<h1>Detalles del Cliente</h1>
+
+<div>
+    <h4>Información del Cliente</h4>
+    <p><strong>Nombre:</strong> @Model.Nombre</p>
+    <p><strong>Correo Electrónico:</strong> @Model.Correo</p>
+    <p><strong>Teléfono:</strong> @Model.Telefono</p>
+</div>
+
+<h4 class="mt-4">Deudas Asociadas</h4>
+@if (Model.Deudas != null && Model.Deudas.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Monto</th>
+                <th>Fecha de Vencimiento</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var deuda in Model.Deudas)
+            {
+                <tr>
+                    <td>@deuda.Monto.ToString("C")</td>
+                    <td>@deuda.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">Este cliente no tiene deudas asociadas.</p>
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Cliente</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Correo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Correo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefono)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefono)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="mt-4">
+    <a href='@Url.Action("Index", "Cliente")' class="btn btn-secondary">Volver a la Lista</a>
+    <a href='@Url.Action("Edit", "Cliente", new { id = Model.Id })' class="btn btn-warning">Editar Cliente</a>
 </div>

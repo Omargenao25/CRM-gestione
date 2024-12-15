@@ -11,7 +11,6 @@ namespace CRM_gestion.Models
         [Required(ErrorMessage = "Debe seleccionar un cliente.")]
         public int ClienteId { get; set; } // Relación con el cliente
 
-
         [Column(TypeName = "decimal(18,2)")]
         public decimal Monto { get; set; }
 
@@ -22,6 +21,5 @@ namespace CRM_gestion.Models
         // Colección de cobros asociados a la deuda
         public required Cliente Cliente { get; set; }
         public required ICollection<Cobro> Cobros { get; set; }
-
     }
 }
