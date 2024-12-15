@@ -1,15 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using CRM_gestion.Data;
-using CRM_gestion.Cliente_repositorio;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<CRM_gestionContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CRM_gestionContext") ?? throw new InvalidOperationException("Connection string 'CRM_gestionContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<ClienteRepository>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

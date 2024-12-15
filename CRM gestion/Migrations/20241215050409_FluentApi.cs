@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CRM_gestion.Migrations
 {
     /// <inheritdoc />
-    public partial class FluentApiValidation : Migration
+    public partial class FluentApi : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,35 +15,37 @@ namespace CRM_gestion.Migrations
                 name: "Clientes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ClienteId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Correo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Apellido = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CorreoElectronico = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clientes", x => x.Id);
+                    table.PrimaryKey("PK_Clientes", x => x.ClienteId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Deudas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    DeudaId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ClienteId = table.Column<int>(type: "int", nullable: false),
                     Monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    FechaVencimiento = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    FechaCreación = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaVencimiento = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClienteId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Deudas", x => x.Id);
+                    table.PrimaryKey("PK_Deudas", x => x.DeudaId);
                     table.ForeignKey(
                         name: "FK_Deudas_Clientes_ClienteId",
                         column: x => x.ClienteId,
                         principalTable: "Clientes",
-                        principalColumn: "Id",
+                        principalColumn: "ClienteId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -51,20 +53,20 @@ namespace CRM_gestion.Migrations
                 name: "Cobros",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    CobroId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DeudaId = table.Column<int>(type: "int", nullable: false),
-                    MontoCobrado = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    FechaCobro = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    FechaCobro = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeudaId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cobros", x => x.Id);
+                    table.PrimaryKey("PK_Cobros", x => x.CobroId);
                     table.ForeignKey(
                         name: "FK_Cobros_Deudas_DeudaId",
                         column: x => x.DeudaId,
                         principalTable: "Deudas",
-                        principalColumn: "Id",
+                        principalColumn: "DeudaId",
                         onDelete: ReferentialAction.Cascade);
                 });
 

@@ -21,30 +21,38 @@ namespace CRM_gestion.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Cliente>()
+                        .HasKey(c => c.ClienteId);
+
+            modelBuilder.Entity<Deuda>()
+                        .HasKey(d => d.DeudaId);
+
+            modelBuilder.Entity<Cobro>()
+                        .HasKey(c => c.CobroId);
+
+            modelBuilder.Entity<Deuda>()
+                   .Property(d => d.Monto)
+                   .HasColumnType("decimal(18,2)"); // Especificar precisión y escala
+
+            modelBuilder.Entity<Cobro>()
+                   .Property(c => c.Monto)
+                   .HasColumnType("decimal(18,2)"); // Especificar precisión y escala
+
+            // Relación explícita Cliente -> Deuda (uno a muchos)
+            modelBuilder.Entity<Deuda>()
+                .HasOne(d => d.Cliente) // Deuda tiene un Cliente
+                .WithMany(c => c.Deudas) // Cliente tiene muchas Deudas
+                .HasForeignKey(d => d.ClienteId) // La clave foránea en Deuda
+                .OnDelete(DeleteBehavior.Cascade); // Comportamiento de eliminación
+
+            // Relación explícita Deuda -> Cobros (uno a muchos)
+            modelBuilder.Entity<Deuda>()
+                .HasMany(d => d.Cobros) // Deuda tiene muchos Cobros
+                .WithOne(c => c.Deuda) // Cobro está relacionado con una Deuda
+                .HasForeignKey(c => c.DeudaId) // Clave foránea en Cobro
+                .OnDelete(DeleteBehavior.Cascade); // Comportamiento de eliminación
+
             base.OnModelCreating(modelBuilder);
-
-            // Relación entre Cliente y Deuda
-            modelBuilder.Entity<Deuda>()
-                .HasOne(d => d.Cliente)
-                .WithMany(c => c.Deudas)
-                .HasForeignKey(d => d.ClienteId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Relación entre Deuda y Cobro
-            modelBuilder.Entity<Cobro>()
-                .HasOne(c => c.Deuda)
-                .WithMany(d => d.Cobros)
-                .HasForeignKey(c => c.DeudaId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // Configuración del tipo decimal (en caso de no usar el atributo en las propiedades)
-            modelBuilder.Entity<Deuda>()
-                .Property(d => d.Monto)
-                .HasColumnType("decimal(18,2)");
-
-            modelBuilder.Entity<Cobro>()
-                .Property(c => c.MontoCobrado)
-                .HasColumnType("decimal(18,2)");
         }
     }
 }

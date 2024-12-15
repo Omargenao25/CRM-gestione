@@ -24,13 +24,17 @@ namespace CRM_gestion.Migrations
 
             modelBuilder.Entity("CRM_gestion.Models.Cliente", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ClienteId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClienteId"));
 
-                    b.Property<string>("Correo")
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CorreoElectronico")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -42,18 +46,18 @@ namespace CRM_gestion.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ClienteId");
 
                     b.ToTable("Clientes");
                 });
 
             modelBuilder.Entity("CRM_gestion.Models.Cobro", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CobroId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CobroId"));
 
                     b.Property<int>("DeudaId")
                         .HasColumnType("int");
@@ -61,10 +65,10 @@ namespace CRM_gestion.Migrations
                     b.Property<DateTime>("FechaCobro")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("MontoCobrado")
+                    b.Property<decimal>("Monto")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("Id");
+                    b.HasKey("CobroId");
 
                     b.HasIndex("DeudaId");
 
@@ -73,14 +77,17 @@ namespace CRM_gestion.Migrations
 
             modelBuilder.Entity("CRM_gestion.Models.Deuda", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DeudaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeudaId"));
 
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaCreación")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("FechaVencimiento")
                         .HasColumnType("datetime2");
@@ -88,7 +95,7 @@ namespace CRM_gestion.Migrations
                     b.Property<decimal>("Monto")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("Id");
+                    b.HasKey("DeudaId");
 
                     b.HasIndex("ClienteId");
 

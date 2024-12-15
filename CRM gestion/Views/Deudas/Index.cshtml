@@ -1,0 +1,54 @@
+﻿@model IEnumerable<CRM_gestion.Models.Deuda>
+
+@{
+    ViewData["Title"] = "Deudas";
+}
+
+<h1>Listado de deudas</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Monto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaCreación)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaVencimiento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cliente)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Monto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaCreación)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaVencimiento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cliente.Nombre)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.DeudaId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.DeudaId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.DeudaId">Delete</a>
+                <a asp-action="CreateCobro" asp-route-id="@item?.DeudaId">Agregar Cobros</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

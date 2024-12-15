@@ -1,0 +1,61 @@
+﻿@model Cobro
+
+@{
+    ViewData["Title"] = "Agregar Cobro";
+}
+
+<h2>Agregar Cobro</h2>
+
+<div>
+    <h4>Información de la Deuda</h4>
+    <dl class="row">
+        <dt class="col-sm-2">Cliente</dt>
+        <dd class="col-sm-10">@Model.Deuda.Cliente.Nombre @Model.Deuda.Cliente.Apellido</dd>
+
+        <dt class="col-sm-2">Correo</dt>
+        <dd class="col-sm-10">@Model.Deuda.Cliente.CorreoElectronico</dd>
+
+        <dt class="col-sm-2">Monto Total de la Deuda</dt>
+        <dd class="col-sm-10">@Model.Deuda.Monto.ToString("C")</dd>
+
+        <dt class="col-sm-2">Monto Cobrado</dt>
+        <dd class="col-sm-10">@Model.Deuda.Cobros.Sum(c => c.Monto).ToString("C")</dd>
+
+        <dt class="col-sm-2">Monto Restante</dt>
+        <dd class="col-sm-10">
+            @(@Model.Deuda.Monto - @Model.Deuda.Cobros.Sum(c => c.Monto)).ToString("C")
+        </dd>
+
+        <dt class="col-sm-2">Fecha de Vencimiento</dt>
+        <dd class="col-sm-10">@Model.Deuda.FechaVencimiento.ToShortDateString()</dd>
+    </dl>
+</div>
+
+<hr />
+
+<form asp-action="CreateCobro" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="DeudaId" value="@Model.DeudaId" />
+
+    <div class="form-group">
+        <label asp-for="Monto" class="control-label">Monto del Cobro</label>
+        <input asp-for="Monto" class="form-control" />
+        <span asp-validation-for="Monto" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FechaCobro" class="control-label">Fecha del Cobro</label>
+        <input asp-for="FechaCobro" type="date" class="form-control" />
+        <span asp-validation-for="FechaCobro" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a asp-action="Details" asp-controller="Deudas" asp-route-id="@Model.DeudaId" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

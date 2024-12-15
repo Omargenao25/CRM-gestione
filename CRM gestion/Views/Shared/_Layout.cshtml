@@ -12,8 +12,8 @@
         <nav>
             <ul>
                 <li><a href="@Url.Action("Index", "Home")" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">Inicio</a></li>
-                <li><a href="@Url.Action("Index", "Cliente")" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Cliente" ? "active" : "")">Clientes</a></li>
-                <li><a href="@Url.Action("Index", "Deuda")" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Deuda" ? "active" : "")">Consultar Deudas</a></li>
+                <li><a href="@Url.Action("Index", "Clientes")" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Clientes" ? "active" : "")">Clientes</a></li>
+                <li><a href="@Url.Action("Index", "Deudas")" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Deudas" ? "active" : "")">Consultar Deudas</a></li>
             </ul>
         </nav>
     </header>
