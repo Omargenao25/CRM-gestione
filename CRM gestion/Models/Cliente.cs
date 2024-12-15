@@ -4,11 +4,13 @@ namespace CRM_gestion.Models
 {
     public class Cliente
     {
-        public int Id { get; set; }
-        public string Nombre { get; set; }
-        public string Correo { get; set; }
-        public string Telefono { get; set; }
+        public int ClienteId { get; set; } // Clave primaría
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string CorreoElectronico { get; set; } = string.Empty; 
+        public string Telefono { get; set; } = string.Empty;
 
-        public ICollection<Deuda> Deudas { get; set; } = new List<Deuda>(); // Relación 1 a muchos
+        // Navegación a las deudas asociadas
+        public virtual ICollection<Deuda>? Deudas { get; set; } = new List<Deuda>(); // Relación 1 a muchos
     }
 }

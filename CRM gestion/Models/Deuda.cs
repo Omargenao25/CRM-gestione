@@ -1,16 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace CRM_gestion.Models
+﻿namespace CRM_gestion.Models
 {
     public class Deuda
     {
-        public int Id { get; set; }
-        public int ClienteId { get; set; }
+        public int DeudaId { get; set; }
         public decimal Monto { get; set; }
+        public DateTime FechaCreación { get; set; }
         public DateTime FechaVencimiento { get; set; }
 
-        public Cliente Cliente { get; set; } // Relación muchos a 1
-        public ICollection<Cobro> Cobros { get; set; } = new List<Cobro>(); // Relación 1 a muchos
+        // Relación cliente - deuda
+        public int ClienteId { get; set; } // Clave Foránea
+        public virtual Cliente? Cliente { get; set; } // Propiedad de navegación cliente
+
+        // Cobros Asociados
+        public virtual ICollection<Cobro>? Cobros { get; set; }
     }
 }

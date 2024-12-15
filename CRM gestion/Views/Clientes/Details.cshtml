@@ -1,0 +1,66 @@
+﻿@model Cliente
+
+@{
+    ViewData["Title"] = "Detalles del Cliente";
+}
+
+<h1>Detalles del Cliente</h1>
+
+<div>
+    <h4>Información del Cliente</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Nombre
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Nombre
+        </dd>
+        <dt class="col-sm-2">
+            Correo Electrónico
+        </dt>
+        <dd class="col-sm-10">
+            @Model.CorreoElectronico
+        </dd>
+        <dt class="col-sm-2">
+            Teléfono
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Telefono
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <h4 class="mt-4">Deudas Asociadas</h4>
+    <hr />
+    @if (Model.Deudas != null && Model.Deudas.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Monto</th>
+                    <th>Fecha de Vencimiento</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var deuda in Model.Deudas)
+                {
+                    <tr>
+                        <td>@deuda.Monto.ToString("C")</td>
+                        <td>@deuda.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted">Este cliente no tiene deudas asociadas.</p>
+    }
+</div>
+
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.ClienteId" class="btn btn-warning">Editar Cliente</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
+</div>
