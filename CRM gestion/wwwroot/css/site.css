@@ -1,32 +1,212 @@
-/* Navegación básica */
-nav ul {
-    list-style-type: none;
+
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    display: flex;
-    gap: 1rem;
+    background-color: #f8f9fa;
+    color: #212529;
+    line-height: 1.6;
 }
 
-    nav ul li {
-        display: inline;
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: #343a40;
+    margin-top: 0;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+    a:hover {
+        color: #0056b3;
+        text-decoration: underline;
     }
 
-        nav ul li a {
-            text-decoration: none;
-            color: #333; /* Color de texto principal */
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+/* Navigation Menu */
+nav {
+    background-color: #343a40;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+
+        nav ul li {
+            margin-right: 1.5rem;
         }
 
-            nav ul li a:hover {
-                background-color: #f0f0f0; /* Fondo al pasar el mouse */
-                color: #007bff; /* Color al pasar el mouse */
+            nav ul li a {
+                color: #ffffff;
+                font-size: 1rem;
+                font-weight: 500;
+                padding: 0.5rem 1rem;
+                transition: background-color 0.3s ease;
+                border-radius: 5px;
             }
 
-            /* Estilo para enlace activo */
-            nav ul li a.active {
-                background-color: #007bff; /* Fondo del enlace activo */
-                color: white; /* Texto blanco para contraste */
-                font-weight: bold; /* Resalta visualmente */
-            }
+                nav ul li a:hover {
+                    background-color: #495057;
+                }
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    text-align: center;
+}
+
+    .btn:hover {
+        background-color: #0056b3;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    table th, table td {
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+        text-align: left;
+    }
+
+    table th {
+        background-color: #007bff;
+        color: #ffffff;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    table tr:hover {
+        background-color: #e2e6ea;
+    }
+
+/* Forms */
+form {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    form label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: #495057;
+    }
+
+    form input, form select, form textarea {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease, box-shadow 0.2s ease;
+    }
+
+        form input:focus, form select:focus, form textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+        }
+
+/* Cards */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin: 1rem 0;
+    transition: box-shadow 0.3s ease;
+}
+
+    .card:hover {
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card h3 {
+        margin-top: 0;
+        color: #007bff;
+    }
+
+/* Footer */
+footer {
+    background-color: #343a40;
+    color: #ffffff;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+}
+
+    footer p {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+
+/* Containers */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Utilities */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
+}
+
+.mt-1 {
+    margin-top: 1rem;
+}
+
+.hidden {
+    display: none;
+}
