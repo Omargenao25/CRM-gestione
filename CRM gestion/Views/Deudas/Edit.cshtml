@@ -1,49 +1,64 @@
 ﻿@model CRM_gestion.Models.Deuda
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Deuda";
 }
 
-<h1>Edit</h1>
+<div class="container mt-4">
+    <h1 class="display-6 text-center">Editar Deuda</h1>
+    <p class="text-center text-muted">Modifique los datos necesarios y haga clic en "Guardar" para actualizar la información.</p>
+    <hr />
 
-<h4>Deuda</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="DeudaId" />
-            <div class="form-group">
-                <label asp-for="Monto" class="control-label"></label>
-                <input asp-for="Monto" class="form-control" />
-                <span asp-validation-for="Monto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaCreación" class="control-label"></label>
-                <input asp-for="FechaCreación" class="form-control" />
-                <span asp-validation-for="FechaCreación" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaVencimiento" class="control-label"></label>
-                <input asp-for="FechaVencimiento" class="form-control" />
-                <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClienteId" class="control-label"></label>
-                <select asp-for="ClienteId" class="form-control" asp-items="ViewBag.ClienteId"></select>
-                <span asp-validation-for="ClienteId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+    <!-- Formulario en Tarjeta -->
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Formulario de Edición</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="DeudaId" />
+
+                <!-- Campo Monto -->
+                <div class="form-group mb-3">
+                    <label asp-for="Monto" class="form-label">Monto</label>
+                    <input asp-for="Monto" class="form-control" />
+                    <span asp-validation-for="Monto" class="text-danger"></span>
+                </div>
+
+                <!-- Campo Fecha de Creación -->
+                <div class="form-group mb-3">
+                    <label asp-for="FechaCreación" class="form-label">Fecha de Creación</label>
+                    <input asp-for="FechaCreación" class="form-control" />
+                    <span asp-validation-for="FechaCreación" class="text-danger"></span>
+                </div>
+
+                <!-- Campo Fecha de Vencimiento -->
+                <div class="form-group mb-3">
+                    <label asp-for="FechaVencimiento" class="form-label">Fecha de Vencimiento</label>
+                    <input asp-for="FechaVencimiento" class="form-control" />
+                    <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
+                </div>
+
+                <!-- Campo Cliente -->
+                <div class="form-group mb-3">
+                    <label asp-for="ClienteId" class="form-label">Cliente</label>
+                    <select asp-for="ClienteId" class="form-select" asp-items="ViewBag.ClienteId"></select>
+                    <span asp-validation-for="ClienteId" class="text-danger"></span>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

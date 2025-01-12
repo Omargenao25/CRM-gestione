@@ -34,9 +34,21 @@ namespace CRM_gestion.Data
                    .Property(d => d.Monto)
                    .HasColumnType("decimal(18,2)"); // Especificar precisión y escala
 
+            modelBuilder.Entity<Deuda>()
+                   .Property(d => d.TotalCobrado)
+                   .HasColumnType("decimal(18,2)"); // Especificar precisión y escala
+
+            modelBuilder.Entity<Deuda>()
+                    .Property(d => d.TotalCobrado)
+                    .HasDefaultValue(0m);
+
             modelBuilder.Entity<Cobro>()
                    .Property(c => c.Monto)
                    .HasColumnType("decimal(18,2)"); // Especificar precisión y escala
+
+            modelBuilder.Entity<Cobro>()
+                    .Property(d => d.Monto)
+                    .HasDefaultValue(0m);
 
             // Relación explícita Cliente -> Deuda (uno a muchos)
             modelBuilder.Entity<Deuda>()

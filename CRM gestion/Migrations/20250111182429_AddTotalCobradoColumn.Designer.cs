@@ -4,6 +4,7 @@ using CRM_gestion.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRM_gestion.Migrations
 {
     [DbContext(typeof(CRM_gestionContext))]
-    partial class CRM_gestionContextModelSnapshot : ModelSnapshot
+    [Migration("20250111182429_AddTotalCobradoColumn")]
+    partial class AddTotalCobradoColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,9 +69,7 @@ namespace CRM_gestion.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Monto")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(18,2)")
-                        .HasDefaultValue(0m);
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("CobroId");
 

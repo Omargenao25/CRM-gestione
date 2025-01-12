@@ -1,74 +1,82 @@
 ﻿@model CRM_gestion.Models.Deuda
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles de Deuda";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+    <h1 class="display-6">Detalles de Deuda</h1>
 
-<div>
-    <h4>Deuda</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Monto)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Monto)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaCreación)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FechaCreación)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaVencimiento)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FechaVencimiento)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Cliente)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Cliente.Nombre)
-        </dd>
-    </dl>
+    <!-- Información de la Deuda -->
+    <div class="card shadow mt-4">
+        <div class="card-body">
+            <h4 class="card-title">Información General</h4>
+            <dl class="row">
+                <dt class="col-sm-4">Monto</dt>
+                <dd class="col-sm-8">@Model.Monto.ToString("C")</dd>
+
+                <dt class="col-sm-4">Fecha de Creación</dt>
+                <dd class="col-sm-8">@Model.FechaCreación.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-4">Fecha de Vencimiento</dt>
+                <dd class="col-sm-8">@Model.FechaVencimiento.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-4">Cliente</dt>
+                <dd class="col-sm-8">@Model.Cliente.Nombre</dd>
+
+                <dt class="col-sm-4">Total Cobrado</dt>
+                <dd class="col-sm-8">@Model.TotalCobrado.ToString("C")</dd>
+
+                <dt class="col-sm-4">Monto Restante</dt>
+                <dd class="col-sm-8">
+                    @String.Format("{0:C}", Model.Monto - Model.TotalCobrado)
+                </dd>
+
+            </dl>
+        </div>
+    </div>
+
+    <!-- Cobros Asociados -->
+    <div class="card shadow mt-4">
+        <div class="card-body">
+            <h4 class="card-title">Cobros Asociados</h4>
+            @if (Model.Cobros != null && Model.Cobros.Any())
+            {
+                <table class="table table-bordered mt-3">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Monto</th>
+                            <th>Fecha de Cobro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cobro in Model.Cobros)
+                        {
+                            <tr>
+                                <td>@cobro.Monto.ToString("C")</td>
+                                <td>@cobro.FechaCobro.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-muted">No hay cobros asociados a esta deuda.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model?.DeudaId" class="btn btn-primary me-2">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        <a asp-action="CreateCobro" asp-route-id="@Model?.DeudaId" class="btn btn-success me-2">
+            <i class="bi bi-plus-circle"></i> Agregar Cobro
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver a la Lista
+        </a>
+    </div>
 </div>
-
-<div>
-    <h4>Cobros Asociados</h4>
-    <hr />
-    @if (Model.Cobros != null && Model.Cobros.Any())
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.Cobros.First().Monto)</th>
-                    <th>@Html.DisplayNameFor(model => model.Cobros.First().FechaCobro)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var cobro in Model.Cobros)
-                {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => cobro.Monto)</td>
-                        <td>@Html.DisplayFor(modelItem => cobro.FechaCobro)</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>No hay cobros asociados a esta deuda.</p>
-    }
-</div>
-
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.DeudaId">Edit</a> |
-    <a asp-action="CreateCobro" asp-route-id="@Model?.DeudaId">Agregar Cobros</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-

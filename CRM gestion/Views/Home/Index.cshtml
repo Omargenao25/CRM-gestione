@@ -1,5 +1,31 @@
 ﻿@{
     ViewBag.Title = "Inicio";
 }
-<h2>Bienvenido al CRM</h2>
-<p>Seleccione una opción en el menú para comenzar.</p>
+
+<div class="container text-center mt-5">
+    <h1 class="display-4 text-primary">Bienvenido al CRM</h1>
+    <p class="lead text-muted">Seleccione una opción para comenzar.</p>
+    <div class="d-flex justify-content-center mt-4">
+        <!-- Tarjeta Clientes -->
+        <div class="card m-3 shadow" style="width: 18rem;">
+            <div class="card-body text-center">
+                <h5 class="card-title text-primary">Clientes</h5>
+                <p class="card-text">Administre la información de sus clientes de forma rápida y sencilla.</p>
+                <a href="@Url.Action("Index", "Clientes")" class="btn btn-primary">
+                    <i class="bi bi-person"></i> Ir al Módulo
+                </a>
+            </div>
+        </div>
+
+        <!-- Tarjeta Deudas -->
+        <div class="card m-3 shadow" style="width: 18rem;">
+            <div class="card-body text-center">
+                <h5 class="card-title text-danger">Deudas</h5>
+                <p class="card-text">Consulte y gestione las deudas de los clientes.</p>
+                <a href="@Url.Action("Index", "Deudas")" class="btn btn-danger">
+                    <i class="bi bi-currency-dollar"></i> Consultar Deudas
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

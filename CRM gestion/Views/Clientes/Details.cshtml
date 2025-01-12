@@ -1,66 +1,66 @@
-﻿@model Cliente
+﻿@model CRM_gestion.Models.Cliente
 
 @{
     ViewData["Title"] = "Detalles del Cliente";
 }
 
-<h1>Detalles del Cliente</h1>
+<h1 class="text-primary">Detalles del Cliente</h1>
 
-<div>
-    <h4>Información del Cliente</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            Nombre
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Nombre
-        </dd>
-        <dt class="col-sm-2">
-            Correo Electrónico
-        </dt>
-        <dd class="col-sm-10">
-            @Model.CorreoElectronico
-        </dd>
-        <dt class="col-sm-2">
-            Teléfono
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Telefono
-        </dd>
-    </dl>
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4>Información del Cliente</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Nombre:</strong> @Model.Nombre</p>
+                <p><strong>Correo Electrónico:</strong> @Model.CorreoElectronico</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Teléfono:</strong> @Model.Telefono</p>
+                <p><strong>Total Deudas a Pagar:</strong> @Model.Deudas.Sum(d => d.Monto).ToString("C")</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div>
-    <h4 class="mt-4">Deudas Asociadas</h4>
-    <hr />
-    @if (Model.Deudas != null && Model.Deudas.Any())
-    {
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Monto</th>
-                    <th>Fecha de Vencimiento</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var deuda in Model.Deudas)
-                {
+<div class="card shadow-sm">
+    <div class="card-header bg-secondary text-white">
+        <h4>Deudas Asociadas</h4>
+    </div>
+    <div class="card-body">
+        @if (Model.Deudas != null && Model.Deudas.Any())
+        {
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
                     <tr>
-                        <td>@deuda.Monto.ToString("C")</td>
-                        <td>@deuda.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                        <th>Monto</th>
+                        <th>Fecha de Vencimiento</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p class="text-muted">Este cliente no tiene deudas asociadas.</p>
-    }
+                </thead>
+                <tbody>
+                    @foreach (var deuda in Model.Deudas)
+                    {
+                        <tr>
+                            <td>@deuda.Monto.ToString("C")</td>
+                            <td>@deuda.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">Este cliente no tiene deudas asociadas.</p>
+        }
+    </div>
 </div>
 
-<div class="mt-4">
-    <a asp-action="Edit" asp-route-id="@Model.ClienteId" class="btn btn-warning">Editar Cliente</a>
-    <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
+<div class="mt-4 d-flex justify-content-between">
+    <a asp-action="Edit" asp-route-id="@Model.ClienteId" class="btn btn-warning">
+        <i class="bi bi-pencil-square"></i> Editar Cliente
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Volver a la Lista
+    </a>
 </div>

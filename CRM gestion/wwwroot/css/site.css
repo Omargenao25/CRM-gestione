@@ -210,3 +210,127 @@ footer {
 .hidden {
     display: none;
 }
+
+/* Scrollable Table */
+.table-scroll {
+    max-height: 400px; /* Define la altura máxima del contenedor */
+    overflow-x: auto;
+    overflow-y: auto; /* Habilita el scroll vertical */
+    border: 1px solid #dee2e6; /* (Opcional) Bordes para visualizar el área del scroll */
+    margin-bottom: 1rem; /* Espaciado inferior */
+}
+
+.panel {
+    padding: 0;
+    border-radius: 20px;
+    border: none;
+}
+
+    .panel .panel-heading {
+        background: #2c96d3;
+        padding: 15px;
+        border-radius: 20px 20px 0 0;
+        margin: 0;
+    }
+
+        .panel .panel-heading .title {
+            color: #fff;
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 39px;
+            text-transform: capitalize;
+            margin: 0;
+        }
+
+        .panel .panel-heading .add-new {
+            color: #333;
+            background-color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 12px 8px;
+            border-radius: 5px;
+            transition: all 0.3s ease 0s;
+        }
+
+            .panel .panel-heading .add-new:hover,
+            .panel .panel-heading .add-new:focus {
+                color: #fff;
+                background-color: #333;
+            }
+
+    .panel .panel-body .table thead tr th {
+        font-size: 17px;
+        font-weight: 600;
+        padding: 12px;
+    }
+
+    .panel .panel-body .table tbody tr td {
+        color: #555;
+        font-size: 15px;
+        padding: 10px 12px;
+        vertical-align: middle;
+    }
+
+    .panel .panel-body .table tbody .action-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+        .panel .panel-body .table tbody .action-list li {
+            display: inline-block;
+        }
+
+            .panel .panel-body .table tbody .action-list li a {
+                color: #fff;
+                font-size: 14px;
+                transition: all 0.3s ease 0s;
+            }
+
+                .panel .panel-body .table tbody .action-list li a:hover {
+                    text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+                }
+
+/* Paginación */
+.pagination {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+    .pagination li {
+        display: inline;
+        margin-right: 5px;
+    }
+
+        .pagination li a,
+        .pagination li span {
+            color: #007bff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+            .pagination li a:hover,
+            .pagination li span:hover {
+                background-color: #f8f9fa;
+                color: #0056b3;
+            }
+
+    .pagination .active a,
+    .pagination .active span {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .pagination .disabled a,
+    .pagination .disabled span {
+        color: #ccc;
+        pointer-events: none;
+    }

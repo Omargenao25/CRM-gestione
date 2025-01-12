@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CRM_gestion.Data;
 using CRM_gestion.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using CRM_gestion.Models.ViewModels;
 
 namespace CRM_gestion.Controllers
 {
@@ -21,13 +22,33 @@ namespace CRM_gestion.Controllers
         }
 
         // GET: Deudas
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var Deudas = _context.Deudas
-                        .Include(d => d.Cliente)
-                        .Include(d => d.Cobros);
 
-            return View(await Deudas.ToListAsync());
+            var totalDeudas = _context.Deudas
+                        .Include(d => d.Cliente)
+                        .Include(d => d.Cobros)
+                        .OrderByDescending(d => d.FechaCreación)
+                        .ThenByDescending(d => d.Monto);
+
+            //Paginar Resultados
+            var deudas = totalDeudas
+                        .Skip((page - 1) * pageSize)
+                        .Take(pageSize);
+
+            var totalItems = await totalDeudas.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            var viewModel = new DeudasViewModel
+            {
+                Deudas = await deudas.ToListAsync(),
+                CurrentPage = page,
+                TotalPages = totalPages,
+                PageSize = pageSize
+            };
+
+            return View(viewModel);
+
         }
 
         // GET: Deudas/Details/5
@@ -65,9 +86,21 @@ namespace CRM_gestion.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DeudaId,Monto,FechaCreación,FechaVencimiento,ClienteId")] Deuda deuda)
         {
-            _context.Add(deuda);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _context.Add(deuda);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch(InvalidDataException)
+            {
+                ModelState.AddModelError(string.Empty, "Error al guardar los datos");
+            }
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "ClienteId", "Nombre", deuda.ClienteId);
+            return View(deuda);
         }
 
         // GET: Deudas/Edit/5
@@ -94,13 +127,8 @@ namespace CRM_gestion.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DeudaId,Monto,FechaCreación,FechaVencimiento,ClienteId")] Deuda deuda)
+        public async Task<IActionResult> Edit([Bind("DeudaId,Monto,FechaCreación,FechaVencimiento,ClienteId")] Deuda deuda)
         {
-            if (id != deuda.DeudaId)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
@@ -121,7 +149,7 @@ namespace CRM_gestion.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "ClienteId", "ClienteId", deuda.ClienteId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "ClienteId", "Nombre", deuda.ClienteId);
             return View(deuda);
         }
 
@@ -156,32 +184,78 @@ namespace CRM_gestion.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCobro(int DeudaId, [Bind("DeudaId","CobroId","Monto","FechaCobro")] Cobro cobro)
+        public async Task<IActionResult> CreateCobro(
+        int DeudaId,
+        [Bind("DeudaId", "CobroId", "Monto", "FechaCobro")] Cobro cobro)
         {
+            if (cobro == null)
+            {
+                ModelState.AddModelError(string.Empty, "El objeto cobro no puede ser nulo.");
+                return View(cobro);
+            }
+
+            if (!DeudaExists(DeudaId))
+            {
+                ModelState.AddModelError(string.Empty, "La deuda no existe.");
+                return View(cobro);
+            }
+
             var deuda = await _context.Deudas
-                                .Include(d => d.Cobros)
-                                .FirstOrDefaultAsync(d => d.DeudaId == DeudaId);
+                                      .Include(d => d.Cobros)
+                                      .Include(d => d.Cliente) // Incluye información del cliente para la vista
+                                      .FirstOrDefaultAsync(d => d.DeudaId == DeudaId);
 
             if (deuda == null)
             {
-                return NotFound("Deuda no encontrada");
+                return NotFound("Deuda no encontrada.");
             }
 
-            var TotalCobrado = await _context
-                                    .Cobros.Where(c => c.DeudaId == DeudaId)
-                                    .SumAsync(c => c.Monto);
+            // Calcular el total cobrado incluyendo el nuevo cobro
+            var totalConNuevoCobro = deuda.TotalCobrado + cobro.Monto;
 
-            if (TotalCobrado + cobro.Monto > deuda.Monto)
+            if (totalConNuevoCobro > deuda.Monto)
             {
-                return BadRequest($"El monto total ({TotalCobrado + cobro.Monto}) excede el monto de la deuda ({deuda.Monto}).");
+                ModelState.AddModelError(string.Empty,
+                    $"El monto total ({totalConNuevoCobro:C}) excede el monto de la deuda ({deuda.Monto:C}).");
+                
+                return View(new Cobro
+                {
+                    DeudaId = deuda.DeudaId,
+                    Deuda = deuda
+                });
             }
 
-            cobro.DeudaId = deuda.DeudaId;
-            _context.Add(cobro);
-            await _context.SaveChangesAsync();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    cobro.DeudaId = deuda.DeudaId;
+                    _context.Add(cobro);
 
-            //Redirigir a los detalles de la deuda
-            return RedirectToAction("Details","Deudas", new {id = DeudaId});
+                    // Actualizar el total cobrado
+                    deuda.TotalCobrado = totalConNuevoCobro;
+                    _context.Update(deuda);
+                    await _context.SaveChangesAsync();
+
+                    // Redirigir a los detalles de la deuda
+                    return RedirectToAction(nameof(Details), "Deudas", new { id = DeudaId });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log del error
+                Console.Error.WriteLine($"Error al guardar el cobro: {ex.Message}");
+
+                ModelState.AddModelError(string.Empty,
+                    "No se pudieron guardar los cambios. Intenta nuevamente y contacta al administrador si el problema persiste.");
+            }
+
+            // Devolver la vista con datos cargados en caso de error
+            return View(new Cobro
+            {
+                DeudaId = deuda.DeudaId,
+                Deuda = deuda
+            });
         }
 
         // GET: Deudas/Delete/5
@@ -210,14 +284,34 @@ namespace CRM_gestion.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var deuda = await _context.Deudas.FindAsync(id);
+            var deuda = await _context.Deudas
+                                        .Include(d => d.Cliente)
+                                        .Include(d => d.Cobros)
+                                        .FirstOrDefaultAsync(m => m.DeudaId == id);
+
             if (deuda != null)
             {
-                _context.Deudas.Remove(deuda);
+                if (deuda.Cobros.Count > 0)
+                {
+                    // Si tiene cobros, agregar el mensaje de error
+                    TempData["ErrorMessage"] = "No puedes eliminar una deuda con cobros asociados.";
+                    // Retornar la vista con la deuda y el mensaje de error
+                    return View(deuda);
+                }
+                else
+                {
+                    // Si no tiene cobros, proceder con la eliminación
+                    _context.Deudas.Remove(deuda);
+                    await _context.SaveChangesAsync();
+                    // Redirigir a la acción Index después de eliminar la deuda
+                    return RedirectToAction(nameof(Index));
+                }
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                TempData["ErrorMessage"] = "La deuda no existe.";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool DeudaExists(int id)
